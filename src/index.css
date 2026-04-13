@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400..800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 6% 5%;
+    --foreground: 240 5% 80%;
+
+    --card: 240 7% 9%;
+    --card-foreground: 240 5% 80%;
+
+    --popover: 240 7% 9%;
+    --popover-foreground: 240 5% 80%;
+
+    --primary: 20 100% 50%;
+    --primary-foreground: 240 6% 5%;
+
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 240 5% 80%;
+
+    --muted: 240 4% 18%;
+    --muted-foreground: 240 4% 46%;
+
+    --accent: 120 100% 60%;
+    --accent-foreground: 240 6% 5%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 240 5% 18%;
+    --input: 240 4% 20%;
+    --ring: 20 100% 50%;
+
+    --radius: 0.125rem;
+
+    /* Custom tokens */
+    --signal: 20 100% 50%;
+    --phosphor: 120 100% 60%;
+    --panel: 240 7% 9%;
+    --chassis: 240 6% 5%;
+    --module: 240 6% 13%;
+
+    --font-mono: 'B612 Mono', monospace;
+    --font-display: 'Syne', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    @apply bg-primary/30 text-primary-foreground;
+  }
+}
+
+@layer components {
+  .screw {
+    @apply size-2 rounded-full shadow-inner ring-1 ring-border;
+    background-color: hsl(var(--muted-foreground) / 0.3);
+  }
+
+  .glow-signal {
+    box-shadow: 0 0 20px hsl(var(--signal) / 0.4);
+  }
+
+  .glow-phosphor {
+    box-shadow: 0 0 8px hsl(var(--phosphor) / 0.6);
+  }
+
+  .panel-card {
+    @apply bg-card border border-border rounded-sm relative;
+  }
+
+  .skill-bar {
+    @apply h-1 rounded-full overflow-hidden;
+    background-color: hsl(var(--input));
+  }
+
+  .skill-bar-fill {
+    @apply h-full transition-all duration-700;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-mono-custom {
+    font-family: var(--font-mono);
+  }
+
+  .text-signal {
+    color: hsl(var(--signal));
+  }
+
+  .bg-signal {
+    background-color: hsl(var(--signal));
+  }
+
+  .text-phosphor {
+    color: hsl(var(--phosphor));
+  }
+
+  .bg-phosphor {
+    background-color: hsl(var(--phosphor));
+  }
+
+  .border-signal {
+    border-color: hsl(var(--signal));
+  }
+}
