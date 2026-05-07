@@ -10,11 +10,11 @@ const Footer = () => {
         © 2025 Matheus_Ptasinski
       </div>
       <div className="flex gap-4 md:gap-6">
-        <a href="https://github.com/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-signal transition-colors flex items-center gap-1.5">
+        <a href="https://github.com/matheushpr9" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-signal transition-colors flex items-center gap-1.5">
           <Github className="size-3" />
           <span className="text-[8px] md:text-[9px] uppercase tracking-widest">GitHub</span>
         </a>
-        <a href="https://linkedin.com/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-signal transition-colors flex items-center gap-1.5">
+        <a href="https://www.linkedin.com/in/matheus-henrique-ptasinski-rosa-7127bb226/" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-signal transition-colors flex items-center gap-1.5">
           <Linkedin className="size-3" />
           <span className="text-[8px] md:text-[9px] uppercase tracking-widest">LinkedIn</span>
         </a>
