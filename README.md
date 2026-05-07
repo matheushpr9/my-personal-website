@@ -4,56 +4,101 @@ Site pessoal / portfólio com seções de experiência profissional, projetos, f
 
 ## Tech Stack
 
-- **React 18** + **TypeScript**
-- **Vite** — build tool
-- **Tailwind CSS** + **ShadCN/UI** — estilização e componentes
-- **Framer Motion** — animações
-- **React Router** — roteamento SPA
-- **React Query** — data fetching e cache
-- **Zod** + **React Hook Form** — validação
+**Frontend**
+- React 18 + TypeScript + Vite
+- Tailwind CSS + ShadCN/UI + Framer Motion
+- React Router + React Query
+
+**Backend**
+- Go + [Chi](https://github.com/go-chi/chi)
+- SQLite (via `modernc.org/sqlite` — pure Go, sem CGO)
+- JWT para autenticação do admin
+
+---
 
 ## Estrutura do Projeto
 
 ```
-src/
-├── components/           # Seções públicas do site
-│   ├── AboutSection.tsx        # Bio, skills e tools
-│   ├── ExperienceSection.tsx   # Timeline de experiências
-│   ├── ProjectsSection.tsx     # Projetos pessoais
-│   ├── EducationSection.tsx    # Formação acadêmica
-│   ├── BooksSection.tsx        # Reviews de livros
-│   ├── GameReviewsSection.tsx  # Reviews de jogos
-│   ├── RecipesSection.tsx      # Receitas
-│   ├── Navbar.tsx              # Navegação + seletor de idioma
-│   └── Footer.tsx
-├── pages/
-│   ├── Index.tsx         # Página principal (portfólio)
-│   ├── NotFound.tsx
-│   └── admin/
-│       ├── Login.tsx     # Tela de login do admin
-│       ├── Admin.tsx     # Dashboard com tabs por entidade
-│       └── CrudEditor.tsx # Componente genérico de CRUD
-├── hooks/
-│   └── use-api.ts        # React Query hooks + tipos de todas as entidades
-├── lib/
-│   ├── api.ts            # HTTP client com auth (Bearer JWT)
-│   └── utils.ts
-├── contexts/
-│   └── LanguageContext.tsx # Contexto PT/EN
-└── App.tsx               # Rotas: /, /admin, /admin/login
+my-personal-website/
+├── src/                    # Frontend React
+│   ├── components/         # Seções públicas do site
+│   ├── pages/
+│   │   ├── Index.tsx       # Página principal
+│   │   └── admin/          # Login + painel admin
+│   ├── hooks/use-api.ts    # React Query hooks + tipos
+│   └── lib/api.ts          # HTTP client com auth JWT
+├── backend/                # API Go
+│   ├── main.go
+│   ├── internal/
+│   │   ├── db/db.go        # SQLite + migrations
+│   │   └── handlers/       # auth + CRUD genérico
+│   └── .env.example
+├── public/
+└── vite.config.ts          # proxy /api → localhost:3000 em dev
 ```
 
-## Rotas
+---
+
+## Rodando Localmente
+
+### Pré-requisitos
+
+- [Node.js](https://nodejs.org/) ≥ 18
+- [Go](https://go.dev/) ≥ 1.22
+
+### 1. Backend
+
+```bash
+cd backend
+
+# Copiar e editar variáveis de ambiente
+cp .env.example .env
+```
+
+Edite o `.env`:
+
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=minha-senha       # texto puro no dev, bcrypt em prod
+JWT_SECRET=troque-por-chave-longa
+DB_PATH=data.db
+PORT=3000
+```
+
+```bash
+# Baixar dependências (só na primeira vez)
+go mod tidy
+
+# Rodar o servidor (porta 3000)
+go run .
+```
+
+O banco SQLite (`data.db`) é criado automaticamente na primeira execução com todas as tabelas.
+
+### 2. Frontend
+
+Em outro terminal, na raiz do projeto:
+
+```bash
+npm install
+npm run dev        # http://localhost:8080
+```
+
+O Vite já faz proxy de `/api` para `localhost:3000`, então frontend e backend funcionam juntos sem configuração extra.
+
+### Rotas
 
 | Rota | Descrição |
 |------|-----------|
-| `/` | Site público (portfólio) |
-| `/admin/login` | Login do painel admin |
-| `/admin` | Painel de gerenciamento de conteúdo (requer autenticação) |
+| `http://localhost:8080/` | Site público |
+| `http://localhost:8080/admin/login` | Login do admin |
+| `http://localhost:8080/admin` | Painel de gerenciamento |
 
-## Entidades Gerenciáveis
+---
 
-O painel admin permite CRUD completo de 9 entidades, todas com suporte bilíngue (PT/EN):
+## Entidades (CRUD via Admin)
+
+Todas com suporte bilíngue PT/EN:
 
 | Entidade | Campos principais |
 |----------|-------------------|
@@ -64,70 +109,167 @@ O painel admin permite CRUD completo de 9 entidades, todas com suporte bilíngue
 | **Projects** | Nome, descrição, tags, URL |
 | **Education** | Título, instituição, período |
 | **Books** | Título, autor, gênero, tipo, score, review, highlights |
-| **Game Reviews** | Nome, tipo (videogame/boardgame), gênero, plataforma, score, review, prós/contras |
-| **Recipes** | Emoji, nome, detalhe, tag, tempo, porções, dificuldade, ingredientes, passos |
+| **Game Reviews** | Nome, tipo (videogame/boardgame), plataforma, score, prós/contras |
+| **Recipes** | Emoji, nome, tag, tempo, ingredientes, passos |
 
-## Fallback
+---
 
-Todos os componentes públicos possuem dados mockados como fallback. Se a API não estiver disponível ou retornar vazio, o site exibe o conteúdo estático normalmente.
+## API Endpoints
 
-## Desenvolvimento
+```
+POST   /api/auth/login          → { token }   (público)
+
+GET    /api/{recurso}           → []Item       (público)
+POST   /api/{recurso}           → { id }       (requer JWT)
+PUT    /api/{recurso}/{id}      → ok           (requer JWT)
+DELETE /api/{recurso}/{id}      → ok           (requer JWT)
+```
+
+Recursos: `about`, `skills`, `tools`, `experiences`, `projects`, `education`, `books`, `game_reviews`, `recipes`
+
+---
+
+## Deploy — VPS Hostinger
+
+**Infraestrutura usada:**
+- VPS Hostinger com Ubuntu
+- Domínio: `www.bymatheus.com.br` (A record apontando para o IP do VPS)
+- `bymatheus.com.br` (sem www) mantido separado para outro projeto
+
+### 1. DNS
+
+No painel da Hostinger → **Domínios → Gerenciar DNS**, configurar:
+
+| Tipo | Nome | Conteúdo |
+|------|------|----------|
+| A | `@` | IP do outro site (não mexer) |
+| A | `www` | IP do VPS |
+
+> O `www` deve ser um **A record** direto para o IP do VPS, não um CNAME.
+
+### 2. Setup inicial do servidor
 
 ```bash
-# Instalar dependências
-npm install
+ssh root@<IP_DO_VPS>
 
-# Rodar em dev
-npm run dev
+# Dependências
+apt update && apt install -y nginx certbot python3-certbot-nginx
 
-# Build para produção
-npm run build
-
-# Lint
-npm run lint
-
-# Testes
-npm test
+# Diretório da aplicação
+mkdir -p /var/www/bymatheus/public
 ```
 
-## Variáveis de Ambiente
+### 3. Serviço systemd
 
-Crie um `.env` na raiz (veja `.env.example`):
+```bash
+cat > /etc/systemd/system/bymatheus-api.service << 'EOF'
+[Unit]
+Description=bymatheus.com.br API
+After=network.target
 
-```env
-# URL da API — em produção na Hostinger, use /api (mesmo domínio)
-VITE_API_URL=/api
+[Service]
+WorkingDirectory=/var/www/bymatheus
+ExecStart=/var/www/bymatheus/api
+EnvironmentFile=/var/www/bymatheus/.env
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+EOF
 ```
 
-## Deploy na Hostinger (Business Web Hosting)
+### 4. Nginx
 
-O plano Business da Hostinger roda Apache + PHP + MySQL. O frontend é servido como arquivos estáticos.
+```bash
+cat > /etc/nginx/sites-available/bymatheus << 'EOF'
+server {
+    listen 80;
+    server_name www.bymatheus.com.br;
 
-1. Rode `npm run build` — gera a pasta `dist/`
-2. Suba o conteúdo de `dist/` para `public_html/` na Hostinger (via File Manager ou FTP)
-3. Crie um `.htaccess` na raiz do `public_html/` para suportar SPA routing:
+    root /var/www/bymatheus/public;
+    index index.html;
 
-```apache
-RewriteEngine On
-RewriteBase /
-RewriteRule ^api/ - [L]
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule . /index.html [L]
+    location /api/ {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+EOF
+
+ln -s /etc/nginx/sites-available/bymatheus /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t && systemctl reload nginx
 ```
 
-> Isso garante que rotas como `/admin` sejam tratadas pelo React Router, enquanto `/api/*` é encaminhado para o backend PHP.
+### 5. Variáveis de ambiente no servidor
 
-### Estrutura final no servidor
-
+```bash
+cat > /var/www/bymatheus/.env << 'EOF'
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=<senha ou hash bcrypt>
+JWT_SECRET=<string longa e aleatória>
+DB_PATH=/var/www/bymatheus/data.db
+PORT=3000
+EOF
 ```
-public_html/
-├── .htaccess          ← SPA routing (acima)
-├── index.html         ← build do React
-├── assets/            ← JS/CSS do build
-└── api/               ← backend (repo separado)
+
+> Para gerar um hash bcrypt da senha: `cd backend && go run ./tools/hash/main.go 'sua-senha'`
+
+### 6. Build e deploy
+
+Na sua máquina local:
+
+```bash
+./deploy.sh
 ```
 
-## Repositório Relacionado
+O script faz o build do frontend e do backend, envia os arquivos por SCP e reinicia o serviço automaticamente.
 
-- **Backend API:** [my-personal-api](../my-personal-api/) — PHP + MySQL REST API que serve os dados deste site
+### 7. Ativar o serviço e HTTPS
+
+```bash
+ssh root@<IP_DO_VPS>
+
+# Ativar o backend
+systemctl daemon-reload
+systemctl enable bymatheus-api
+systemctl start bymatheus-api
+systemctl status bymatheus-api   # deve mostrar "active (running)"
+
+# SSL
+certbot --nginx -d www.bymatheus.com.br --non-interactive --agree-tos -m <seu@email.com>
+```
+
+O Certbot configura o HTTPS e renova o certificado automaticamente.
+
+### Atualizando o site
+
+Para qualquer atualização futura, basta rodar na raiz do projeto:
+
+```bash
+./deploy.sh
+```
+
+---
+
+## Scripts Úteis
+
+```bash
+# Frontend
+npm run dev          # dev server (porta 8080)
+npm run build        # build de produção
+npm run lint         # ESLint
+npm test             # Vitest
+
+# Backend
+cd backend
+go run .             # dev server (porta 3000)
+go build -o api .    # compilar binário local
+go run ./tools/hash/main.go <senha>   # gerar hash bcrypt
+```

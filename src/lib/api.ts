@@ -21,10 +21,22 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const token = getToken();
   if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "Request failed");
-  return data;
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  } catch {
+    throw new Error("Não foi possível conectar ao servidor. Verifique se o backend está rodando.");
+  }
+
+  let data: unknown;
+  try {
+    data = await res.json();
+  } catch {
+    throw new Error(`Resposta inválida do servidor (${res.status})`);
+  }
+
+  if (!res.ok) throw new Error((data as any)?.error || "Request failed");
+  return data as T;
 }
 
 export const api = {

@@ -1,3 +1,8 @@
+# Env — nunca commitar, contém credenciais
+.env
+.env.*
+!.env.example
+
 # Logs
 logs
 *.log
