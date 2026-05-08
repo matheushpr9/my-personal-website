@@ -25,12 +25,12 @@ const ProjectsSection = () => {
             const Wrapper = project.url ? "a" : "div";
             const wrapperProps = project.url ? { href: project.url, target: "_blank", rel: "noopener noreferrer" } : {};
             return (
-              <Wrapper key={project.id} {...wrapperProps} className="group block">
+              <Wrapper key={project.id} {...wrapperProps} className={`group block rounded-sm transition-colors ${project.url ? "cursor-pointer" : ""}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <h4 className="text-sm text-foreground font-bold uppercase tracking-tighter group-hover:text-signal transition-colors">
                     {lang === "pt" ? project.name_pt : project.name_en}
                   </h4>
-                  {project.url && <ExternalLink className="size-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
+                  {project.url && <ExternalLink className="size-3 text-signal shrink-0 group-hover:scale-110 transition-transform" />}
                 </div>
                 <p className="text-xs text-muted-foreground mb-2">{lang === "pt" ? project.description_pt : project.description_en}</p>
                 <div className="flex flex-wrap gap-1">
