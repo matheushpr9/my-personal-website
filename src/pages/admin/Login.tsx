@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { api, setToken } from "@/lib/api";
 
 const Login = () => {
@@ -7,6 +7,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -14,7 +15,8 @@ const Login = () => {
     try {
       const res = await api.post<{ token: string }>("/auth/login", { username, password });
       setToken(res.token);
-      navigate("/admin");
+      const next = new URLSearchParams(location.search).get("next") || "/admin";
+      navigate(next);
     } catch (err: any) {
       setError(err.message);
     }

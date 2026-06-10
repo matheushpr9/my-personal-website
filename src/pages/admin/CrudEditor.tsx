@@ -13,14 +13,16 @@ interface Props<T> {
   fields: FieldDef[];
   data: T[] | undefined;
   isLoading: boolean;
-  onCreate: (item: any) => void;
-  onUpdate: (item: any) => void;
+  onCreate: (item: any) => Promise<any> | void;
+  onUpdate: (item: any) => Promise<any> | void;
   onDelete: (id: number) => void;
 }
 
 function CrudEditor<T extends { id?: number }>({ title, fields, data, isLoading, onCreate, onUpdate, onDelete }: Props<T>) {
   const [editing, setEditing] = useState<T | null>(null);
   const [isNew, setIsNew] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const empty = fields.reduce((acc, f) => {
     if (f.type === "number") acc[f.key] = 0;
@@ -30,15 +32,23 @@ function CrudEditor<T extends { id?: number }>({ title, fields, data, isLoading,
     return acc;
   }, {} as any);
 
-  const startNew = () => { setEditing({ ...empty } as T); setIsNew(true); };
-  const startEdit = (item: T) => { setEditing({ ...item }); setIsNew(false); };
-  const cancel = () => { setEditing(null); setIsNew(false); };
+  const startNew = () => { setEditing({ ...empty } as T); setIsNew(true); setError(null); };
+  const startEdit = (item: T) => { setEditing({ ...item }); setIsNew(false); setError(null); };
+  const cancel = () => { setEditing(null); setIsNew(false); setError(null); };
 
-  const save = () => {
+  const save = async () => {
     if (!editing) return;
-    if (isNew) onCreate(editing);
-    else onUpdate(editing);
-    cancel();
+    setSaving(true);
+    setError(null);
+    try {
+      if (isNew) await onCreate(editing);
+      else await onUpdate(editing);
+      cancel();
+    } catch (e: any) {
+      setError(e?.message || "Erro ao salvar");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const setField = (key: string, value: any) => {
@@ -115,11 +125,12 @@ function CrudEditor<T extends { id?: number }>({ title, fields, data, isLoading,
               {renderField(f)}
             </div>
           ))}
+          {error && <p className="text-[10px] text-destructive">{error}</p>}
           <div className="flex gap-2 pt-2">
-            <button onClick={save} className="flex items-center gap-1 bg-signal text-primary-foreground px-3 py-1.5 rounded-sm text-xs font-bold uppercase">
-              <Save className="size-3" /> Save
+            <button onClick={save} disabled={saving} className="flex items-center gap-1 bg-signal text-primary-foreground px-3 py-1.5 rounded-sm text-xs font-bold uppercase disabled:opacity-50">
+              <Save className="size-3" /> {saving ? "Salvando..." : "Save"}
             </button>
-            <button onClick={cancel} className="flex items-center gap-1 border border-border px-3 py-1.5 rounded-sm text-xs text-muted-foreground uppercase">
+            <button onClick={cancel} disabled={saving} className="flex items-center gap-1 border border-border px-3 py-1.5 rounded-sm text-xs text-muted-foreground uppercase disabled:opacity-50">
               Cancel
             </button>
           </div>
@@ -131,7 +142,7 @@ function CrudEditor<T extends { id?: number }>({ title, fields, data, isLoading,
           <div key={item.id} className="flex items-center justify-between border border-border rounded-sm p-3">
             <div className="text-xs text-foreground truncate flex-1">
               <span className="text-muted-foreground mr-2">#{item.id}</span>
-              {item.name || item.title || item.name_pt || item.title_pt || item.bio_pt?.slice(0, 60) || JSON.stringify(item).slice(0, 60)}
+              {item.name || item.title || item.name_pt || item.title_pt || item.bio_pt?.slice(0, 60) || item.content?.slice(0, 60) || JSON.stringify(item).slice(0, 60)}
             </div>
             <div className="flex gap-1 shrink-0 ml-2">
               <button onClick={() => startEdit(item)} className="text-[10px] text-signal uppercase px-2 py-1 border border-signal/30 rounded-sm">

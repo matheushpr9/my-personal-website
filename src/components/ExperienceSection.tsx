@@ -16,30 +16,32 @@ const ExperienceSection = () => {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} id="experience" className="panel-card p-5 md:p-8">
-      <div className="absolute left-3 md:left-4 top-16 bottom-4 w-px bg-signal/30" />
       <h2 className="text-base md:text-xl font-bold text-foreground uppercase tracking-tighter mb-6 md:mb-8">
         {t("Experiência_Profissional", "Professional_Experience")}
       </h2>
       {isLoading ? (
         <div className="text-xs text-muted-foreground animate-pulse">Loading...</div>
       ) : (
-        <div className="space-y-8 md:space-y-12 relative">
-          {experiences.map((exp) => (
-            <div key={exp.id} className="relative pl-8 md:pl-12">
-              <div className={`absolute top-1 ${exp.active ? "left-1.5 md:left-2.5 size-3 rounded-full bg-background border-2 border-signal glow-signal" : "left-2 md:left-3 size-2 rounded-full bg-muted-foreground/30"}`} />
-              <div className={`text-[10px] font-bold mb-1 ${exp.active ? "text-signal" : "text-muted-foreground"}`}>
-                {lang === "pt" ? exp.period_pt : exp.period_en}
+        <div className="relative">
+          <div className="absolute left-3 md:left-4 top-1 bottom-0 w-px bg-signal/30" />
+          <div className="space-y-8 md:space-y-12">
+            {experiences.map((exp) => (
+              <div key={exp.id} className="relative pl-8 md:pl-12">
+                <div className={`absolute top-1 ${exp.active ? "left-1.5 md:left-2.5 size-3 rounded-full bg-background border-2 border-signal glow-signal" : "left-2 md:left-3 size-2 rounded-full bg-muted-foreground/30"}`} />
+                <div className={`text-[10px] font-bold mb-1 ${exp.active ? "text-signal" : "text-muted-foreground"}`}>
+                  {lang === "pt" ? exp.period_pt : exp.period_en}
+                </div>
+                <h3 className="text-sm md:text-lg font-bold text-foreground">{lang === "pt" ? exp.title_pt : exp.title_en}</h3>
+                <div className="text-[10px] md:text-xs text-muted-foreground mb-2">{exp.company}</div>
+                <p className="text-xs md:text-sm text-muted-foreground/80 max-w-xl mb-3">{lang === "pt" ? exp.description_pt : exp.description_en}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {exp.tags.map((tag) => (
+                    <span key={tag} className="px-1.5 md:px-2 py-0.5 text-[8px] md:text-[9px] border border-border rounded-sm text-muted-foreground uppercase tracking-tighter">{tag}</span>
+                  ))}
+                </div>
               </div>
-              <h3 className="text-sm md:text-lg font-bold text-foreground">{lang === "pt" ? exp.title_pt : exp.title_en}</h3>
-              <div className="text-[10px] md:text-xs text-muted-foreground mb-2">{exp.company}</div>
-              <p className="text-xs md:text-sm text-muted-foreground/80 max-w-xl mb-3">{lang === "pt" ? exp.description_pt : exp.description_en}</p>
-              <div className="flex flex-wrap gap-1.5">
-                {exp.tags.map((tag) => (
-                  <span key={tag} className="px-1.5 md:px-2 py-0.5 text-[8px] md:text-[9px] border border-border rounded-sm text-muted-foreground uppercase tracking-tighter">{tag}</span>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </motion.div>

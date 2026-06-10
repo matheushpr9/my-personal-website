@@ -1,6 +1,6 @@
 import { useLang } from "@/contexts/LanguageContext";
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Download } from "lucide-react";
 
 const Navbar = () => {
   const { lang, toggle, t } = useLang();
@@ -57,27 +57,51 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="panel-card w-24 md:w-48 p-2 md:p-4 flex flex-col justify-between shrink-0">
-          <div className="text-[8px] md:text-[9px] uppercase tracking-tighter text-muted-foreground">
-            {t("Idioma", "Language")}
+        <div className="panel-card w-28 md:w-52 p-2 md:p-4 flex flex-col md:flex-row md:items-center shrink-0 gap-2 md:gap-3 justify-center">
+          <div className="flex-1">
+            <div className="text-[8px] md:text-[9px] uppercase tracking-tighter text-muted-foreground mb-1">
+              {t("Idioma", "Language")}
+            </div>
+            <div className="flex bg-input rounded-sm p-0.5 md:p-1">
+              <button
+                onClick={() => lang !== "pt" && toggle()}
+                className={`flex-1 text-center py-1 text-[9px] md:text-[10px] rounded-sm transition-colors ${
+                  lang === "pt" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                PT
+              </button>
+              <button
+                onClick={() => lang !== "en" && toggle()}
+                className={`flex-1 text-center py-1 text-[9px] md:text-[10px] rounded-sm transition-colors ${
+                  lang === "en" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                EN
+              </button>
+            </div>
           </div>
-          <div className="flex bg-input rounded-sm p-0.5 md:p-1 mt-1">
-            <button
-              onClick={() => lang !== "pt" && toggle()}
-              className={`flex-1 text-center py-1 text-[9px] md:text-[10px] rounded-sm transition-colors ${
-                lang === "pt" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              PT
-            </button>
-            <button
-              onClick={() => lang !== "en" && toggle()}
-              className={`flex-1 text-center py-1 text-[9px] md:text-[10px] rounded-sm transition-colors ${
-                lang === "en" ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              EN
-            </button>
+
+          <div className="hidden md:block flex-1">
+            <div className="text-[9px] uppercase tracking-tighter text-muted-foreground mb-1">
+              CV
+            </div>
+            <div className="flex gap-1">
+              <a
+                href="/cv-pt-br.pdf"
+                download="CV-Matheus-Ptasinski-PT.pdf"
+                className="flex-1 flex items-center justify-center gap-0.5 py-1 text-[10px] border border-signal/40 rounded-sm text-signal hover:bg-signal/10 transition-colors uppercase font-bold"
+              >
+                <Download className="size-2.5" /> PT
+              </a>
+              <a
+                href="/cv-english.pdf"
+                download="CV-Matheus-Ptasinski-EN.pdf"
+                className="flex-1 flex items-center justify-center gap-0.5 py-1 text-[10px] border border-border rounded-sm text-muted-foreground hover:border-signal/40 hover:text-signal transition-colors uppercase font-bold"
+              >
+                <Download className="size-2.5" /> EN
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -97,6 +121,22 @@ const Navbar = () => {
           <button onClick={() => scrollTo("recipes")} className="text-left text-xs font-bold uppercase tracking-widest text-foreground hover:text-signal transition-colors">
             {t("Receitas", "Recipes")}
           </button>
+          <div className="border-t border-border pt-2 flex gap-2">
+            <a
+              href="/cv-pt-br.pdf"
+              download="CV-Matheus-Ptasinski-PT.pdf"
+              className="flex items-center gap-1 text-xs font-bold uppercase text-signal border border-signal/40 rounded-sm px-3 py-1.5 hover:bg-signal/10 transition-colors"
+            >
+              <Download className="size-3" /> CV PT-BR
+            </a>
+            <a
+              href="/cv-english.pdf"
+              download="CV-Matheus-Ptasinski-EN.pdf"
+              className="flex items-center gap-1 text-xs font-bold uppercase text-muted-foreground border border-border rounded-sm px-3 py-1.5 hover:border-signal/40 hover:text-signal transition-colors"
+            >
+              <Download className="size-3" /> CV EN
+            </a>
+          </div>
         </div>
       )}
     </header>

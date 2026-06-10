@@ -15,8 +15,10 @@ const ProjectsSection = () => {
   const projects = data && data.length > 0 ? data : fallback;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="panel-card p-6">
-      <div className="text-[10px] uppercase text-muted-foreground tracking-widest mb-6">{t("Projetos", "Projects")}</div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="panel-card p-5 md:p-6">
+      <div className="text-[10px] uppercase text-muted-foreground tracking-widest mb-6">
+        {t("Projetos", "Projects")}
+      </div>
       {isLoading ? (
         <div className="text-xs text-muted-foreground animate-pulse">Loading...</div>
       ) : (

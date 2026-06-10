@@ -1,17 +1,20 @@
-import { LanguageProvider } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import AboutSection from "@/components/AboutSection";
 import ExperienceSection from "@/components/ExperienceSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import GameReviewsSection from "@/components/GameReviewsSection";
+import GastronomySection from "@/components/GastronomySection";
+import GameBacklogSection from "@/components/GameBacklogSection";
 import RecipesSection from "@/components/RecipesSection";
 import EducationSection from "@/components/EducationSection";
 import BooksSection from "@/components/BooksSection";
+import MediaBacklogSection from "@/components/MediaBacklogSection";
+import StudySection from "@/components/StudySection";
+import NotesSection from "@/components/NotesSection";
 import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <LanguageProvider>
       <div className="min-h-dvh p-3 md:p-6">
         <Navbar />
 
@@ -31,12 +34,16 @@ const Index = () => {
           {/* Bottom: Personal */}
           <BooksSection />
           <GameReviewsSection />
+          <GameBacklogSection />
           <RecipesSection />
+          <GastronomySection />
+          <MediaBacklogSection />
+          <StudySection />
+          <NotesSection />
         </main>
 
         <Footer />
       </div>
-    </LanguageProvider>
   );
 };
 

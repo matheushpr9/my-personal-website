@@ -14,8 +14,11 @@ const EducationSection = () => {
   const items = data && data.length > 0 ? data : fallback;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="panel-card p-6">
-      <div className="text-[10px] uppercase text-muted-foreground tracking-widest mb-4">{t("Formação", "Education")}</div>
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="panel-card p-5 md:p-6">
+      <div className="text-[10px] uppercase text-muted-foreground tracking-widest mb-4 flex items-center gap-2">
+        <GraduationCap className="size-3" />
+        {t("Formação", "Education")}
+      </div>
       {isLoading ? (
         <div className="text-xs text-muted-foreground animate-pulse">Loading...</div>
       ) : (
