@@ -17,6 +17,13 @@ dist
 dist-ssr
 *.local
 
+# Go compiled binaries
+backend/fetch-media-covers
+backend/*.exe
+
+# Personal notes (not source code)
+src/components/*.md
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
