@@ -29,8 +29,10 @@ ssh "$VPS_USER@$VPS_IP" "systemctl stop bymatheus-api"
 echo "▶  Enviando binário da API..."
 scp backend/api "$VPS_USER@$VPS_IP:$VPS_DIR/api"
 
+echo "▶  Verificando Calibre no servidor..."
+ssh "$VPS_USER@$VPS_IP" "which ebook-convert > /dev/null 2>&1 || (apt-get install -y --no-install-recommends calibre 2>&1 | tail -5 && echo '✅ Calibre instalado')"
+
 echo "▶  Reiniciando serviço..."
 ssh "$VPS_USER@$VPS_IP" "chmod +x $VPS_DIR/api && systemctl start bymatheus-api"
 
 echo "✅  Deploy concluído → https://www.bymatheus.com.br"
-echo "    (bymatheus.com.br sem www continua apontando para o site de casamento)"
