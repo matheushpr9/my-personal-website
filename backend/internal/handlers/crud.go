@@ -56,11 +56,22 @@ func (h *Handler) List(res string) http.HandlerFunc {
 	}
 }
 
+func writableCols(cols []ColDef) []ColDef {
+	var out []ColDef
+	for _, c := range cols {
+		if c.Kind != KindReadOnly {
+			out = append(out, c)
+		}
+	}
+	return out
+}
+
 func (h *Handler) Create(res string) http.HandlerFunc {
 	def := resourceDefs[res]
-	names := colNames(def.Cols)
+	wcols := writableCols(def.Cols)
+	names := colNames(wcols)
 	query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)",
-		def.Table, strings.Join(names, ", "), strings.Join(placeholders(len(def.Cols)), ", "))
+		def.Table, strings.Join(names, ", "), strings.Join(placeholders(len(wcols)), ", "))
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		body, err := parseBody(r)
@@ -68,8 +79,8 @@ func (h *Handler) Create(res string) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "invalid body")
 			return
 		}
-		vals := make([]any, len(def.Cols))
-		for i, col := range def.Cols {
+		vals := make([]any, len(wcols))
+		for i, col := range wcols {
 			vals[i] = convertIn(body[col.Name], col.Kind)
 		}
 		result, err := h.db.Exec(query, vals...)
@@ -84,8 +95,9 @@ func (h *Handler) Create(res string) http.HandlerFunc {
 
 func (h *Handler) Update(res string) http.HandlerFunc {
 	def := resourceDefs[res]
-	setClauses := make([]string, len(def.Cols))
-	for i, col := range def.Cols {
+	wcols := writableCols(def.Cols)
+	setClauses := make([]string, len(wcols))
+	for i, col := range wcols {
 		setClauses[i] = col.Name + "=?"
 	}
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE id=?",
@@ -102,11 +114,11 @@ func (h *Handler) Update(res string) http.HandlerFunc {
 			writeError(w, http.StatusBadRequest, "invalid body")
 			return
 		}
-		vals := make([]any, len(def.Cols)+1)
-		for i, col := range def.Cols {
+		vals := make([]any, len(wcols)+1)
+		for i, col := range wcols {
 			vals[i] = convertIn(body[col.Name], col.Kind)
 		}
-		vals[len(def.Cols)] = id
+		vals[len(wcols)] = id
 		if _, err := h.db.Exec(query, vals...); err != nil {
 			writeError(w, http.StatusInternalServerError, err.Error())
 			return

@@ -3,10 +3,11 @@ package handlers
 type ColKind int
 
 const (
-	KindText    ColKind = iota
+	KindText     ColKind = iota
 	KindInt
 	KindBool
 	KindJSONArr
+	KindReadOnly // returned in list, ignored in create/update (managed by dedicated endpoints)
 )
 
 type ColDef struct {
@@ -79,6 +80,12 @@ var resourceDefs = map[string]ResDef{
 		{Name: "full_review_en"},
 		{Name: "highlights_pt", Kind: KindJSONArr},
 		{Name: "highlights_en", Kind: KindJSONArr},
+		{Name: "format"},
+		{Name: "sort_order", Kind: KindInt},
+	}},
+	"notes": {Table: "notes", Cols: []ColDef{
+		{Name: "content"},
+		{Name: "color"},
 		{Name: "sort_order", Kind: KindInt},
 	}},
 	"game_reviews": {Table: "game_reviews", Cols: []ColDef{
@@ -97,6 +104,32 @@ var resourceDefs = map[string]ResDef{
 		{Name: "pros_en", Kind: KindJSONArr},
 		{Name: "cons_pt", Kind: KindJSONArr},
 		{Name: "cons_en", Kind: KindJSONArr},
+		{Name: "cover_path", Kind: KindReadOnly},
+		{Name: "sort_order", Kind: KindInt},
+	}},
+	"gastronomy": {Table: "gastronomy", Cols: []ColDef{
+		{Name: "name"},
+		{Name: "cuisine"},
+		{Name: "city"},
+		{Name: "location_url"},
+		{Name: "visited", Kind: KindBool},
+		{Name: "photo_path", Kind: KindReadOnly},
+		{Name: "sort_order", Kind: KindInt},
+	}},
+	"media_backlog": {Table: "media_backlog", Cols: []ColDef{
+		{Name: "name"},
+		{Name: "genre"},
+		{Name: "type"},
+		{Name: "watched", Kind: KindBool},
+		{Name: "liked", Kind: KindBool},
+		{Name: "streaming"},
+		{Name: "cover_path"},
+		{Name: "sort_order", Kind: KindInt},
+	}},
+	"game_backlog": {Table: "game_backlog", Cols: []ColDef{
+		{Name: "name"},
+		{Name: "genre"},
+		{Name: "cover_path", Kind: KindReadOnly},
 		{Name: "sort_order", Kind: KindInt},
 	}},
 	"recipes": {Table: "recipes", Cols: []ColDef{
@@ -109,12 +142,11 @@ var resourceDefs = map[string]ResDef{
 		{Name: "tag_en"},
 		{Name: "prep_time"},
 		{Name: "servings"},
-		{Name: "difficulty_pt"},
-		{Name: "difficulty_en"},
 		{Name: "ingredients_pt", Kind: KindJSONArr},
 		{Name: "ingredients_en", Kind: KindJSONArr},
 		{Name: "steps_pt", Kind: KindJSONArr},
 		{Name: "steps_en", Kind: KindJSONArr},
 		{Name: "sort_order", Kind: KindInt},
+		{Name: "photo_path", Kind: KindReadOnly},
 	}},
 }
